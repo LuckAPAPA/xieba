@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>就是那个叫谢霸的人</title>
+    <style>
+        /* 全局样式：支持自定义背景图 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            font-family: "微软雅黑", sans-serif;
+            padding: 20px;
+            /* 背景图核心设置：你替换下面的路径就行 */
+            background-image: url("1.JPG");
+            background-size: cover; /* 背景图自适应屏幕 */
+            background-position: center; /* 背景图居中 */
+            background-repeat: no-repeat; /* 背景图不重复 */
+            background-attachment: fixed; /* 滚动时背景不动 */
+        }
+
+        /* 独立标题栏（大框架，醒目居中） */
+        .header-bar {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 40px; /* 标题栏居中，下方留间距 */
+            padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.5); /* 半透明黑色背景，突出标题 */
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+        .main-title {
+            font-family: "楷体", "KaiTi", serif; /* 楷体标题 */
+            font-size: 56px; /* 大标题，醒目 */
+            color: #ffffff; /* 白色文字，对比背景 */
+            text-shadow: 0 3px 8px rgba(255, 255, 255, 0.3); /* 文字发光效果 */
+            letter-spacing: 5px; /* 字间距拉开，更有气势 */
+        }
+
+        /* 登录容器：半透明卡片，不遮挡背景 */
+        .login-container {
+            background: rgba(255, 255, 255, 0.85); /* 半透明白色，看清背景又不影响输入 */
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto; /* 登录框居中 */
+        }
+
+        /* 输入框样式 */
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: #b21f1f;
+            box-shadow: 0 0 0 3px rgba(178, 31, 31, 0.1);
+        }
+
+        /* 登录按钮 */
+        .login-btn {
+            width: 100%;
+            padding: 14px 0;
+            background: #b21f1f;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        .login-btn:hover {
+            background: #8a1818;
+            transform: scale(1.02);
+        }
+
+        /* 错误提示 */
+        .error-tip {
+            color: #ff4d4f;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* 圣诞树页面样式（默认隐藏） */
+        #christmas-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8); /* 半透明黑色背景，突出圣诞树 */
+            display: none; /* 登录前隐藏 */
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            z-index: 999; /* 确保在最上层 */
+        }
+        /* 雪花特效 */
+        .snow {
+            position: absolute;
+            color: #fff;
+            font-size: 16px;
+            pointer-events: none;
+            animation: snowfall linear infinite;
+        }
+        /* 圣诞树灯光闪烁 */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        /* 雪花飘落（优化速度，避免过快） */
+        @keyframes snowfall {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+        /* 圣诞树容器 */
+        #christmas-tree {
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* 手机端适配：缩小标题和内边距 */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 40px; /* 手机端标题缩小 */
+                letter-spacing: 3px;
+            }
+            .header-bar {
+                padding: 15px 20px;
+            }
+            .login-container {
+                padding: 40px 30px;
+            }
+            /* 手机端减少雪花数量，降低卡顿 */
+            .snow {
+                font-size: 12px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 独立标题栏（大框架，可直接用） -->
+    <div class="header-bar">
+        <h1 class="main-title">猜猜这个网页是谁写的，没错就是那个叫做谢霸的人</h1>
+    </div>
+
+    <!-- 登录界面 -->
+    <div class="login-container">
+        <div class="input-group">
+            <label for="username">管理员账号</label>
+            <input type="text" id="username" placeholder="请输入账号">
+        </div>
+        <div class="input-group">
+            <label for="password">密码</label>
+            <input type="password" id="password" placeholder="请输入密码"> <!-- 自动隐藏为* -->
+        </div>
+        <button class="login-btn" onclick="checkLogin()">登录</button>
+        <div class="error-tip" id="errorTip">账号或密码错误！请输入1433</div>
+    </div>
+
+    <!-- 圣诞树页面（登录后显示） -->
+    <div id="christmas-page">
+        <div id="christmas-tree">
+            <!-- 圣诞树保留，后续可自行修改 -->
+            <div style="font-size: 24px; color: #00ff00; animation: blink 1s infinite;">
+                🎄<br>
+               🌲🌲🌲<br>
+              🌳🌳🌳🌳🌳<br>
+             🌴🌴🌴🌴🌴🌴🌴<br>
+            🌵🌵🌵🌵🌵🌵🌵🌵🌵<br>
+           🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿🌿<br>
+          🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀<br>
+             🟤🟤🟤🟤🟤<br>
+             🟤🟤🟤🟤🟤<br>
+            </div>
+            <div style="text-align: center; color: #ffd700; font-size: 28px; margin-top: 20px;">
+                Merry Christmas!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量：控制雪花定时器，避免重复创建
+        let snowTimer = null;
+        // 最大雪花数量限制（防止过多卡顿）
+        const MAX_SNOW_COUNT = 80;
+
+        // 登录验证：账号1433，密码1433
+        function checkLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorTip = document.getElementById('errorTip');
+
+            if (username === '1433' && password === '1433') {
+                // 登录成功：隐藏登录框，显示圣诞树页面
+                document.querySelector('.login-container').style.display = 'none';
+                const christmasPage = document.getElementById('christmas-page');
+                christmasPage.style.display = 'flex';
+                
+                // 启动雪花特效（先清空旧定时器，避免重复）
+                startSnowEffect(christmasPage);
+            } else {
+                errorTip.style.display = 'block';
+                setTimeout(() => errorTip.style.display = 'none', 3000);
+            }
+        }
+
+        // 雪花特效核心修复：控制数量+自动清理+避免重复定时器
+        function startSnowEffect(container) {
+            // 先清除旧的雪花定时器（防止重复创建）
+            if (snowTimer) clearInterval(snowTimer);
+            
+            // 清理容器内旧的雪花（避免叠加）
+            const oldSnows = container.querySelectorAll('.snow');
+            oldSnows.forEach(snow => snow.remove());
+
+            // 生成初始雪花
+            createSnowflakes(container);
+
+            // 定时补充雪花（5秒一次，且只补充消失的，不叠加）
+            snowTimer = setInterval(() => {
+                // 先统计当前雪花数量
+                const currentSnowCount = container.querySelectorAll('.snow').length;
+                // 只补充缺失的数量，不超过最大值
+                const needCreate = Math.max(0, MAX_SNOW_COUNT - currentSnowCount);
+                if (needCreate > 0) {
+                    createSnowflakes(container, needCreate);
+                }
+            }, 5000);
+        }
+
+        // 生成雪花：可指定数量，默认补满最大值
+        function createSnowflakes(container, count = MAX_SNOW_COUNT) {
+            // 手机端减少雪花数量（降低性能消耗）
+            const isMobile = window.innerWidth <= 768;
+            const realCount = isMobile ? Math.floor(count * 0.6) : count;
+
+            for (let i = 0; i < realCount; i++) {
+                const snow = document.createElement('div');
+                snow.className = 'snow';
+                snow.innerText = '❄️';
+                // 随机大小（手机端已通过CSS限制）
+                snow.style.fontSize = `${Math.random() * 10 + 8}px`;
+                // 随机位置（避免扎堆）
+                snow.style.left = `${Math.random() * 100}vw`;
+                snow.style.top = `${Math.random() * -20}px`;
+                // 随机飘落速度（3-8秒，避免同步）
+                const duration = Math.random() * 5 + 3;
+                snow.style.animationDuration = `${duration}s`;
+                // 随机透明度
+                snow.style.opacity = Math.random() * 0.6 + 0.2;
+                
+                container.appendChild(snow);
+                
+                // 雪花落地后自动删除（核心：避免DOM堆积）
+                setTimeout(() => {
+                    if (snow.parentNode) snow.remove();
+                }, duration * 1000);
+            }
+        }
+
+        // 按Enter键登录
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter') checkLogin();
+        });
+
+        // 页面关闭时清理定时器（防止内存泄漏）
+        window.addEventListener('beforeunload', () => {
+            if (snowTimer) clearInterval(snowTimer);
+        });
+    </script>
+</body>
+</html>
