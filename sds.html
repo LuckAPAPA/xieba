@@ -15,12 +15,14 @@
             min-height: 100vh;
             font-family: "微软雅黑", sans-serif;
             padding: 20px;
-            /* 背景图核心设置：你替换下面的路径就行 */
-            background-image: url("https://raw.githubusercontent.com/LuckAPAPA/xieba/main/1.jpg");
+            /* 修复后的背景图链接（适配中文仓库名） */
+            background-image: url("https://luckapapa.github.io/%E8%B0%A2%E5%B7%B4/1.jpg");
             background-size: cover; /* 背景图自适应屏幕 */
             background-position: center; /* 背景图居中 */
             background-repeat: no-repeat; /* 背景图不重复 */
             background-attachment: fixed; /* 滚动时背景不动 */
+            /* 兜底背景色：如果图片加载失败，不会空白 */
+            background-color: #333;
         }
 
         /* 独立标题栏（大框架，醒目居中） */
@@ -296,5 +298,4 @@
         });
     </script>
 </body>
-
 </html>
