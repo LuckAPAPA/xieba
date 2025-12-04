@@ -9,7 +9,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Microsoft YaHei", "SimHei", sans-serif;
+            /* 中文字体名加引号，避免解析错误 */
+            font-family: "Microsoft YaHei", "SimHei", "sans-serif";
         }
 
         .start-page {
@@ -27,14 +28,15 @@
 
         .start-text {
             font-size: 24px;
-            color: #fff;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            color: #ff6b9e; /* 换个颜色更醒目，避免和白底冲突 */
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
             margin-bottom: 40px;
             text-align: center;
             line-height: 1.6;
             background-color: #ffffff;
             border-radius: 12px;
             padding: 15px 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .heart-btn {
@@ -50,6 +52,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            /* 解决移动端点击高亮问题 */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .heart-btn:hover {
@@ -80,32 +84,16 @@
         }
 
         @keyframes popupIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
+        /* 适配移动端 */
         @media (max-width: 480px) {
-            .start-text {
-                font-size: 20px;
-            }
-            .heart-btn {
-                width: 70px;
-                height: 70px;
-                font-size: 35px;
-            }
-            .popup {
-                width: 150px;
-                height: 70px;
-            }
-            .popup-text {
-                font-size: 16px;
-            }
+            .start-text { font-size: 20px; }
+            .heart-btn { width: 70px; height: 70px; font-size: 35px; }
+            .popup { width: 150px; height: 70px; }
+            .popup-text { font-size: 16px; }
         }
     </style>
 </head>
@@ -126,17 +114,13 @@
             const popupTimer = setInterval(() => {
                 createPopup();
                 popupIndex++;
-                
-                if (popupIndex >= POPUP_COUNT) {
-                    clearInterval(popupTimer);
-                }
+                if (popupIndex >= POPUP_COUNT) clearInterval(popupTimer);
             }, DELAY);
         }
 
         function createPopup() {
             const screenWidth = window.innerWidth;
             const screenHeight = window.innerHeight;
-            
             const maxX = screenWidth - 180;
             const maxY = screenHeight - 80;
             const randomX = Math.floor(Math.random() * maxX);
@@ -154,22 +138,17 @@
             popup.appendChild(popupText);
             document.body.appendChild(popup);
 
-            popup.onclick = function() {
-                this.remove();
-            };
+            popup.onclick = function() { this.remove(); };
         }
 
-        window.addEventListener('resize', function() {
+        // 适配屏幕旋转
+        window.addEventListener('resize', () => {
             const popups = document.querySelectorAll('.popup');
             popups.forEach(popup => {
-                const screenWidth = window.innerWidth;
-                const screenHeight = window.innerHeight;
-                const maxX = screenWidth - 180;
-                const maxY = screenHeight - 80;
-                
+                const maxX = window.innerWidth - 180;
+                const maxY = window.innerHeight - 80;
                 const currentX = parseInt(popup.style.left);
                 const currentY = parseInt(popup.style.top);
-                
                 if (currentX > maxX) popup.style.left = `${maxX}px`;
                 if (currentY > maxY) popup.style.top = `${maxY}px`;
             });
