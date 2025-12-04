@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>四等水准单站数据检验</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e6ba3',
+                        secondary: '#3b82f6',
+                        accent: '#0ea5e9',
+                        neutral: '#f1f5f9',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .input-focus {
+                @apply focus:ring-2 focus:ring-accent focus:border-transparent;
+            }
+            .card-shadow {
+                @apply shadow-md hover:shadow-lg transition-shadow duration            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen">
+    <!-- 顶部标题栏 -->
+    <header class="bg-primary text-white py-4 px-6 sticky top-0 z-10 shadow-md">
+        <h1 class="text-lg md:text-xl font-bold text-center">四等水准单站数据检验</h1>
+        <p class="text-xs md:text-sm text-center mt-1 text-blue-100">理论与实际差距不得≥5mm</p>
+    </header>
+
+    <main class="container mx-auto px-4 py-6 max-w-md">
+        <!-- 输入区域 -->
+        <form id="surveyForm" class="space-y-6">
+            <!-- 后视数据 -->
+            <div class="bg-white rounded-xl p-5 card-shadow">
+                <h2 class="text-primary font-bold mb-4 flex items-center">
+                    <i class="fa fa-eye mr-2"></i>后视数据
+                </h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">上丝</label>
+                        <input type="number" step="any" id="backUpper" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus text-center"
+                            placeholder="请输入">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">下丝</label>
+                        <input type="number" step="any" id="backLower" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus text-center"
+                            placeholder="请输入">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 前视数据 -->
+            <div class="bg-white rounded-xl p-5 card-shadow">
+                <h2 class="text-primary font-bold mb-4 flex items-center">
+                    <i class="fa fa-crosshairs mr-2"></i>前视数据
+                </h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">上丝</label>
+                        <input type="number" step="any" id="frontUpper" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus text-center"
+                            placeholder="请输入">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">下丝</label>
+                        <input type="number" step="any" id="frontLower" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg input-focus text-center"
+                            placeholder="请输入">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 红面参数 -->
+            <div class="bg-white rounded-xl p-5 card-shadow">
+                <h2 class="text-primary font-bold mb-4 flex items-center">
+                    <i class="fa fa-sliders mr-2"></i>红面参数（后视）
+                </h2>
+                <div class="flex justify-around items-center py-2">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="radio" name="redParam" value="4687" class="hidden peer" checked>
+                        <div class="w-12 h-6 border border-gray-300 rounded-full peer-checked:bg-primary peer-checked:border-primary transition-colors"></div>
+                        <span class="ml-2 text-gray-700">4687</span>
+                    </label>
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="radio" name="redParam" value="4787" class="hidden peer">
+                        <div class="w-12 h-6 border border-gray-300 rounded-full peer-checked:bg-primary peer-checked:border-primary transition-colors"></div>
+                        <span class="ml-2 text-gray-700">4787</span>
+                    </label>
+                    <p class="text-xs text-gray-500">前视将自动使用另一个参数</p>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="flex gap-4">
+                <button type="button" id="calculateBtn" 
+                    class="flex-1 bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
+                    <i class="fa fa-calculator mr-2"></i>计算
+                </button>
+                <button type="reset" id="clearBtn" 
+                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
+                    <i class="fa fa-refresh mr-2"></i>清空
+                </button>
+            </div>
+        </form>
+
+        <!-- 结果显示区域 -->
+        <div class="mt-6 bg-white rounded-xl p-5 card-shadow">
+            <h2 class="text-primary font-bold mb-4 flex items-center">
+                <i class="fa fa-table mr-2"></i>计算结果
+            </h2>
+            <div class="overflow-y-auto max-h-[300px] pr-1">
+                <table class="w-full text-sm">
+                    <tbody id="resultTable">
+                        <!-- 结果将通过JS动态插入 -->
+                        <tr class="text-center text-gray-500">
+                            <td colspan="2" class="py-8">请输入数据并点击计算</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- 底部信息 -->
+    <footer class="mt-8 py-4 text-center text-gray-500 text-xs">
+        <p>水准测量数据计算器 © 2023</p>
+    </footer>
+
+    <!-- 错误提示弹窗 -->
+    <div id="errorModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 max-w-xs w-full mx-4">
+            <div class="text-danger text-center mb-4">
+                <i class="fa fa-exclamation-circle text-3xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-center text-gray-800 mb-2">输入错误</h3>
+            <p class="text-gray-600 text-center mb-4" id="errorMessage">请确保所有输入都是有效的数字</p>
+            <button id="closeErrorBtn" class="w-full bg-primary text-white py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                确定
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 等待DOM加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const calculateBtn = document.getElementById('calculateBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const resultTable = document.getElementById('resultTable');
+            const errorModal = document.getElementById('errorModal');
+            const errorMessage = document.getElementById('errorMessage');
+            const closeErrorBtn = document.getElementById('closeErrorBtn');
+            const surveyForm = document.getElementById('surveyForm');
+
+            // 计算按钮点击事件
+            calculateBtn.addEventListener('click', calculate);
+            
+            // 清空按钮点击事件
+            clearBtn.addEventListener('click', function() {
+                resultTable.innerHTML = `
+                    <tr class="text-center text-gray-500">
+                        <td colspan="2" class="py-8">请输入数据并点击计算</td>
+                    </tr>
+                `;
+            });
+            
+            // 关闭错误弹窗
+            closeErrorBtn.addEventListener('click', function() {
+                errorModal.classList.add('hidden');
+            });
+
+            // 计算函数
+            function calculate() {
+                try {
+                    // 获取输入值
+                    const backUpper = parseFloat(document.getElementById('backUpper').value);
+                    const backLower = parseFloat(document.getElementById('backLower').value);
+                    const frontUpper = parseFloat(document.getElementById('frontUpper').value);
+                    const frontLower = parseFloat(document.getElementById('frontLower').value);
+                    
+                    // 验证输入
+                    if (isNaN(backUpper) || isNaN(backLower) || isNaN(frontUpper) || isNaN(frontLower)) {
+                        throw new Error("请确保所有输入都是有效的数字");
+                    }
+                    
+                    // 获取红面参数
+                    const backRedParam = parseFloat(document.querySelector('input[name="redParam"]:checked').value);
+                    const frontRedParam = backRedParam === 4687 ? 4787 : 4687;
+                    
+                    // 计算距离（四舍五入为整数）
+                    const backDistance = Math.round(backUpper - backLower);
+                    const frontDistance = Math.round(frontUpper - frontLower);
+                    
+                    // 计算中丝（四舍五入为整数）
+                    const backMiddle = Math.round((backUpper + backLower) / 2);
+                    const frontMiddle = Math.round((frontUpper + frontLower) / 2);
+                    const middleDifference = backMiddle - frontMiddle;
+                    
+                    // 计算红面读数（四舍五入为整数）
+                    const backRed = Math.round(backMiddle + backRedParam);
+                    const frontRed = Math.round(frontMiddle + frontRedParam);
+                    const redDifference = backRed - frontRed;
+                    
+                    // 计算黑面高差和调整后的红面高差
+                    const blackHeightDiff = middleDifference;
+                    let adjustedRedHeightDiff;
+                    
+                    if (blackHeightDiff > 0) {
+                        adjustedRedHeightDiff = redDifference + 100;
+                    } else {
+                        adjustedRedHeightDiff = redDifference - 100;
+                    }
+                    
+                    // 计算高差中数（取整数）
+                    const heightMean = Math.round((blackHeightDiff + adjustedRedHeightDiff) / 2);
+                    
+                    // 验证是否符合要求
+                    const isQualified = Math.abs(blackHeightDiff - adjustedRedHeightDiff) < 5;
+                    
+                    // 更新结果表格
+                    resultTable.innerHTML = `
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3 px-2 text-gray-700">后视距离</td>
+                            <td class="py-3 px-2 text-center font-medium">${backDistance}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3 px-2 text-gray-700">前视距离</td>
+                            <td class="py-3 px-2 text-center font-medium">${frontDistance}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3 px-2 text-gray-700">后视中丝</td>
+                            <td class="py-3 px-2 text-center font-medium">${backMiddle}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3 px-2 text-gray-700">前视中丝</td>
+                            <td class="py-3 px-2 text-center font-medium">${frontMiddle}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3 px-2 text-gray-700">中丝差值（后-前）</td>
+                            <td class="py-3 px-2 text-center font-medium">${middleDifference}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3 px-2 text-gray-700">后视红面读数</td>
+                            <td class="py-3 px-2 text-center font-medium">${backRed}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3 px-2 text-gray-700">前视红面读数</td>
+                            <td class="py-3 px-2 text-center font-medium">${frontRed}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3 px-2 text-gray-700">红面差值（后-前）</td>
+                            <td class="py-3 px-2 text-center font-medium">${redDifference}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3 px-2 text-gray-700">黑面高差</td>
+                            <td class="py-3 px-2 text-center font-medium">${blackHeightDiff}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3 px-2 text-gray-700">调整后红面高差</td>
+                            <td class="py-3 px-2 text-center font-medium">${adjustedRedHeightDiff}</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-3 px-2 text-gray-700">高差中数</td>
+                            <td class="py-3 px-2 text-center font-medium">${heightMean}</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-2 text-gray-700">检验结果</td>
+                            <td class="py-3 px-2 text-center font-medium ${isQualified ? 'text-success' : 'text-danger'}">
+                                ${isQualified ? '符合要求' : '不符合要求'}
+                            </td>
+                        </tr>
+                    `;
+                    
+                } catch (error) {
+                    // 显示错误信息
+                    errorMessage.textContent = error.message;
+                    errorModal.classList.remove('hidden');
+                }
+            }
+
+            // 点击空白处关闭错误弹窗
+            errorModal.addEventListener('click', function(e) {
+                if (e.target === errorModal) {
+                    errorModal.classList.add('hidden');
+                }
+            });
+
+            // 输入框获取焦点时放大
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.classList.add('scale-105', 'transition-transform');
+                });
+                input.addEventListener('blur', function() {
+                    this.classList.remove('scale-105', 'transition-transform');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
