@@ -1,0 +1,199 @@
+<!-- 版权声明：本代码为原创开发，可商用，不可转载！ -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我想你啦 ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "SimHei", sans-serif;
+        }
+
+        .start-page {
+            /* 页面背景渐变：第一个颜色是浅粉，第二个是深粉（可改） */
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffccd5 0%, #ff99cc 100%); 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            z-index: 9999;
+        }
+
+        .start-text {
+            font-size: 24px;
+            color: #ff78a1; /* 开场文字颜色（玫粉色）→ 改这里！ */
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+            text-align: center;
+            line-height: 1.6;
+            background-color: #ffffff; /* 开场文字背景色（白色）→ 改这里！ */
+            border-radius: 12px;
+            padding: 15px 20px;
+        }
+
+        .heart-btn {
+            width: 80px;
+            height: 80px;
+            background-color: #ff6b9e; /* 爱心按钮背景色（玫粉色）→ 改这里！ */
+            border-radius: 50%;
+            border: none;
+            font-size: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 158, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff; /* 爱心按钮内文字颜色（白色）→ 改这里！ */
+        }
+
+        .heart-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 107, 158, 0.6);
+        }
+
+        .popup {
+            position: fixed;
+            width: 180px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.95); /* 弹窗背景色（半透白）→ 改这里！ */
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 10px;
+            animation: popupIn 0.3s ease forwards;
+        }
+
+        .popup-text {
+            font-size: 18px;
+            color: #ff6b9e; /* 弹窗文字颜色（玫粉色）→ 改这里！ */
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        @keyframes popupIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .start-text {
+                font-size: 20px;
+            }
+            .heart-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 35px;
+            }
+            .popup {
+                width: 150px;
+                height: 70px;
+            }
+            .popup-text {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="start-page" id="startPage">
+        <div class="start-text">好久不见，还记得这个吗❤️</div>
+        <button class="heart-btn" onclick="startPopup()">❤️</button>
+    </div>
+
+    <script>
+        const POPUP_COUNT = 100;
+        const DELAY = 100;
+        let popupIndex = 0;
+
+        // 自定义祝福语文本库（可随意增删）
+        const blessingTexts = [
+            '身体健康，万事如意✨',
+            '逢考必过，顺顺利利💯',
+            '要好好吃饭呀🍚',
+            '好好照顾自己❤️',
+            '少点熬夜，早点休息😴',
+            '对自己好一点～',
+            '每天都要开开心心😆',
+            '平安喜乐，岁岁无忧🎈',
+            '事事顺心，好运连连🍀',
+            '愿你被温柔以待💖',
+            '我想你啦～🥰'
+        ];
+
+        function startPopup() {
+            document.getElementById('startPage').style.display = 'none';
+            
+            const popupTimer = setInterval(() => {
+                createPopup();
+                popupIndex++;
+                
+                if (popupIndex >= POPUP_COUNT) {
+                    clearInterval(popupTimer);
+                }
+            }, DELAY);
+        }
+
+        function createPopup() {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            
+            const maxX = screenWidth - 180;
+            const maxY = screenHeight - 80;
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            const popup = document.createElement('div');
+            popup.className = 'popup';
+            popup.style.left = `${randomX}px`;
+            popup.style.top = `${randomY}px`;
+
+            const popupText = document.createElement('div');
+            popupText.className = 'popup-text';
+            // 随机选一条祝福语
+            const randomText = blessingTexts[Math.floor(Math.random() * blessingTexts.length)];
+            popupText.textContent = randomText;
+            
+            popup.appendChild(popupText);
+            document.body.appendChild(popup);
+
+            popup.onclick = function() {
+                this.remove();
+            };
+        }
+
+        window.addEventListener('resize', function() {
+            const popups = document.querySelectorAll('.popup');
+            popups.forEach(popup => {
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+                const maxX = screenWidth - 180;
+                const maxY = screenHeight - 80;
+                
+                const currentX = parseInt(popup.style.left);
+                const currentY = parseInt(popup.style.top);
+                
+                if (currentX > maxX) popup.style.left = `${maxX}px`;
+                if (currentY > maxY) popup.style.top = `${maxY}px`;
+            });
+        });
+    </script>
+</body>
+</html>
