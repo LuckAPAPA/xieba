@@ -5,192 +5,444 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>没错是我！！抽奖券</title>
     <style>
-        /* 全局样式：支持自定义背景图 */
+        /* 全局样式：苹果透明渐变风格 + 全局行楷字体 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: "行楷", "XingKai", "PingFang SC", "微软雅黑", sans-serif;
         }
         body {
             min-height: 100vh;
-            font-family: "微软雅黑", sans-serif;
             padding: 20px;
-            /* 修复后的背景图链接（适配中文仓库名） */
             background-image: url("https://raw.githubusercontent.com/LuckAPAPA/xieba/main/fkdwc.jpg");
-            background-size: cover; /* 背景图自适应屏幕 */
-            background-position: center; /* 背景图居中 */
-            background-repeat: no-repeat; /* 背景图不重复 */
-            background-attachment: fixed; /* 滚动时背景不动 */
-            /* 兜底背景色：如果图片加载失败，不会空白 */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             background-color: #333;
+            overflow-x: hidden;
+            /* 苹果毛玻璃基础样式 */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
-        /* 独立标题栏（大框架，醒目居中） */
+        /* 独立标题栏：苹果透明渐变风格 */
         .header-bar {
             width: 100%;
             max-width: 800px;
-            margin: 0 auto 40px; /* 标题栏居中，下方留间距 */
-            padding: 20px 30px;
-            background: rgba(0, 0, 0, 0.5); /* 半透明黑色背景，突出标题 */
-            border-radius: 15px;
+            margin: 0 auto 40px;
+            padding: 25px 30px;
+            /* 苹果透明渐变背景 */
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
+            border-radius: 24px;
             text-align: center;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
         }
         .main-title {
-            font-family: "楷体", "KaiTi", serif; /* 楷体标题 */
-            font-size: 56px; /* 大标题，醒目 */
-            color: #ffffff; /* 白色文字，对比背景 */
-            text-shadow: 0 3px 8px rgba(255, 255, 255, 0.3); /* 文字发光效果 */
-            letter-spacing: 5px; /* 字间距拉开，更有气势 */
+            font-size: clamp(36px, 8vw, 56px);
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5), 0 3px 8px rgba(0, 0, 0, 0.3);
+            letter-spacing: 5px;
+            line-height: 1.2;
         }
 
-        /* 登录容器：半透明卡片，不遮挡背景 */
+        /* 登录容器：苹果透明渐变风格 */
         .login-container {
-            background: rgba(255, 255, 255, 0.85); /* 半透明白色，看清背景又不影响输入 */
+            /* 苹果毛玻璃登录框 */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             padding: 50px 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            border-radius: 28px;
+            box-shadow: 0 15px 60px rgba(0, 0, 0, 0.15);
             text-align: center;
-            max-width: 400px;
+            max-width: 450px;
             width: 100%;
-            margin: 0 auto; /* 登录框居中 */
+            margin: 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* 输入框样式 */
+        /* 输入框样式：苹果风格 */
         .input-group {
             margin-bottom: 25px;
             text-align: left;
+            position: relative;
         }
         label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
-            font-size: 16px;
+            color: #f0f0f0;
+            font-size: 18px;
             font-weight: 500;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
-        input {
+        /* 账号/密码输入框：苹果透明风格 + 统一月亮特效 */
+        .apple-input {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 30px;
+            padding: 14px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
             font-size: 16px;
             transition: all 0.3s ease;
+            /* 苹果输入框透明背景 */
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
-        input:focus {
+        .apple-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .apple-input:focus {
             outline: none;
-            border-color: #b21f1f;
-            box-shadow: 0 0 0 3px rgba(178, 31, 31, 0.1);
+            border-color: #4ade80; /* 春绿色聚焦边框 */
+            box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.15);
+            background: rgba(255, 255, 255, 0.12);
         }
 
-        /* 登录按钮 */
+        /* 登录按钮：苹果渐变风格 + 春绿色调 */
         .login-btn {
             width: 100%;
             padding: 14px 0;
-            background: #b21f1f;
+            background: linear-gradient(135deg, #4ade80, #22c55e); /* 春绿色渐变 */
             color: white;
             border: none;
-            border-radius: 30px;
+            border-radius: 16px;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(74, 222, 128, 0.3);
         }
         .login-btn:hover {
-            background: #8a1818;
-            transform: scale(1.02);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(74, 222, 128, 0.4);
+        }
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 切换版本按钮 */
+        .version-switch {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #4ade80;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .version-switch:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1));
+            color: #22c55e;
         }
 
         /* 错误提示 */
         .error-tip {
-            color: #ff4d4f;
+            color: #f87171;
             margin-top: 15px;
             font-size: 14px;
             display: none;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
-        /* 圣诞树页面样式（默认隐藏） */
+        /* 颜文字页面样式：固定白色背景 */
         #christmas-page {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.8); /* 半透明黑色背景，突出圣诞树 */
-            display: none; /* 登录前隐藏 */
+            /* 固定白色透明背景 */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.6));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+            z-index: 999;
+            padding: 20px;
+        }
+
+        /* 旧版圣诞树页面 */
+        #christmas-page-v1 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            z-index: 999; /* 确保在最上层 */
+            z-index: 999;
         }
-        /* 雪花特效 */
+        #christmas-tree-v1 {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+        }
+        .christmas-tree-v1-content {
+            font-size: clamp(18px, 5vw, 24px);
+            color: #000000;
+            animation: blink 1s infinite;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+        .christmas-text-v1 {
+            text-align: center;
+            color: #ffd700;
+            font-size: clamp(20px, 6vw, 28px);
+            margin-top: 20px;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* 雪花特效（适配白色背景） */
         .snow {
+            position: absolute;
+            color: #333; /* 白色背景下雪花为黑色 */
+            font-size: 16px;
+            pointer-events: none;
+            animation: snowfall linear infinite;
+        }
+        /* 旧版雪花（白色） */
+        .snow-v1 {
             position: absolute;
             color: #fff;
             font-size: 16px;
             pointer-events: none;
             animation: snowfall linear infinite;
         }
-        /* 圣诞树灯光闪烁 */
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-        /* 雪花飘落（优化速度，避免过快） */
         @keyframes snowfall {
             0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
             100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
         }
-        /* 圣诞树容器 */
+
+        /* 颜文字容器：苹果透明渐变 + 春绿色调 */
         #christmas-tree {
             text-align: center;
-            padding: 20px;
+            padding: 40px 30px;
+            /* 苹果毛玻璃卡片 */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 650px;
+            width: 100%;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer; /* 提示可点击 */
+            transition: all 0.3s ease;
+        }
+        /* 圣诞树发光效果 */
+        #christmas-tree.glow-effect {
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.5), 0 10px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(74, 222, 128, 0.5);
         }
 
-        /* 手机端适配：缩小标题和内边距 */
+        /* 颜文字样式：春绿色系 */
+        .yanwenzi {
+            font-size: 20px;
+            color: #15803d; /* 白色背景下春绿色更亮 */
+            line-height: 1.8;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        /* 圣诞祝福语样式：春绿色 */
+        .christmas-text {
+            font-size: 32px;
+            color: #633102e1;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            letter-spacing: 3px;
+        }
+
+        /* 女巫祝福语样式：*/
+        .witch-text {
+            font-size: 24px;
+            color: #6c04ff;
+            line-height: 1.5;
+            margin-top: 30px;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        /* 月亮特效样式（输入框） */
+        .moon {
+            position: absolute;
+            color: #facc15;
+            font-size: 16px;
+            pointer-events: none;
+            animation: moonFall linear forwards;
+        }
+        @keyframes moonFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100px) rotate(180deg); opacity: 0; }
+        }
+
+        /* 圣诞袜子控件 */
+        .vine-sock {
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .sock-vine {
+            font-size: 24px;
+            color: #22c55e;
+            transform: rotate(15deg);
+        }
+        .christmas-sock {
+            font-size: 28px;
+            margin-left: -10px;
+            transition: transform 0.3s ease;
+        }
+        .vine-sock:hover .christmas-sock {
+            transform: scale(1.2);
+        }
+
+        /* 点击颗粒特效 */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            animation: particleBurst linear forwards;
+            font-size: 18px;
+            z-index: 5;
+        }
+        @keyframes particleBurst {
+            0% { transform: scale(0); opacity: 1; }
+            50% { transform: scale(1.2) translate(var(--x), var(--y)) rotate(var(--rotate)); opacity: 1; }
+            100% { transform: scale(0) translate(var(--x), var(--y)) rotate(var(--rotate)); opacity: 0; }
+        }
+
+        /* 礼物掉落特效 */
+        .gift {
+            position: absolute;
+            color: #eab308;
+            font-size: 20px;
+            pointer-events: none;
+            animation: giftFall linear infinite;
+        }
+        @keyframes giftFall {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* 手机端适配 */
         @media (max-width: 768px) {
             .main-title {
-                font-size: 40px; /* 手机端标题缩小 */
+                font-size: 40px;
                 letter-spacing: 3px;
             }
             .header-bar {
                 padding: 15px 20px;
+                border-radius: 20px;
             }
             .login-container {
                 padding: 40px 30px;
+                border-radius: 24px;
             }
-            /* 手机端减少雪花数量，降低卡顿 */
-            .snow {
+            .snow, .gift, .snow-v1 {
                 font-size: 12px !important;
+            }
+            .yanwenzi {
+                font-size: 18px;
+            }
+            .christmas-text {
+                font-size: 28px;
+            }
+            .witch-text {
+                font-size: 20px;
+            }
+            .vine-sock {
+                transform: scale(0.8);
+            }
+            .version-switch {
+                font-size: 13px;
+                padding: 6px 12px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 独立标题栏（大框架，可直接用） -->
+    <!-- 标题栏 -->
     <div class="header-bar">
-        <h1 class="main-title">想起来一件事，这个世界还有个叫抽奖券的人⌯ᕑᗢᓫ⌯ಣ
+        <h1 class="main-title">想起来一件事，这个世界还有个叫抽奖券的人⌯ᕑᗢᓫ⌯ಣ</h1>
     </div>
 
     <!-- 登录界面 -->
     <div class="login-container">
         <div class="input-group">
             <label for="username">管理员账号</label>
-            <input type="text" id="username" placeholder="请输入账号">
+            <input type="text" id="username" class="apple-input" placeholder="请输入账号">
         </div>
         <div class="input-group">
             <label for="password">密码</label>
-            <input type="password" id="password" placeholder="请输入密码"> <!-- 自动隐藏为* -->
+            <input type="password" id="password" class="apple-input" placeholder="请输入密码">
         </div>
         <button class="login-btn" onclick="checkLogin()">登录</button>
+        <!-- 切换版本按钮 -->
+        <button class="version-switch" onclick="switchToV1()">切换V1.0版本（经典圣诞树）</button>
         <div class="error-tip" id="errorTip">账号或密码错误！请输入1433</div>
     </div>
 
-    <!-- 圣诞树页面（登录后显示） -->
+    <!-- 新版圣诞页面（固定白色背景） -->
     <div id="christmas-page">
         <div id="christmas-tree">
-            <!-- 圣诞树保留，后续可自行修改 -->
-            <div style="font-size: 24px; color: #000000; animation: blink 1s infinite;">
+            <!-- 底部藤蔓+圣诞袜子控件 -->
+            <div class="vine-sock" onclick="triggerGlowAndGift()">
+                <span class="sock-vine">🌿</span>
+                <span class="christmas-sock">🧦</span>
+            </div>
+
+            <!-- 春绿色系颜文字 -->
+            <div class="yanwenzi">
+            ฅʕ•̫͡•ʔฅ<br>
+            o v o(●ˇ∀ˇ●)<br>
+            U•ェ•*U (☆▽☆)<br>
+            (✿◕‿◕✿)(≧∀≦)<br>
+            (⓿_⓿)(ง •_•)ง（＾▽＾）<br>
+            (へ)(,,•ω•,,)(e•∀•e) TvT<br>
+            (❤´艸｀❤)">ω<" P≧•̀•́q づ⊙<br>
+            (★ ω ★)(*^_^*)O(∩_∩)O(=>ω<=)<br>
+            </div>
+            <div class="christmas-text">
+                Merry<br>
+                Christmas<br>
+                to you
+            </div>
+            <!-- 女巫祝福语 -->
+            <div class="witch-text">
+                女巫使用了药水'<br>
+                愿你夜夜平安！！٩(๑>ε<๑)۶
+            </div>
+        </div>
+    </div>
+
+    <!-- 旧版圣诞树页面 -->
+    <div id="christmas-page-v1">
+        <div id="christmas-tree-v1">
+            <div class="christmas-tree-v1-content">
                 🎄<br>
                🌲🌲🌲<br>
               🌳🌳🌳🌳🌳<br>
@@ -200,92 +452,224 @@
           🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀🍀<br>
              🟤🟤🟤🟤🟤<br>
              🟤🟤🟤🟤🟤<br>
-                
             </div>
-            <div style="text-align: center; color: #ffd700; font-size: 28px; margin-top: 20px;">
+            <div class="christmas-text-v1">
                 Merry Christmas!
             </div>
         </div>
     </div>
 
     <script>
-        // 全局变量：控制雪花定时器，避免重复创建
+        // 全局变量
         let snowTimer = null;
-        // 最大雪花数量限制（防止过多卡顿）
+        let giftTimer = null;
         const MAX_SNOW_COUNT = 80;
+        const MAX_GIFT_COUNT = 30;
+        let isV1Mode = false; // 是否是V1版本
 
-        // 登录验证：账号1433，密码1433
+        // 登录验证（默认新版）
         function checkLogin() {
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             const errorTip = document.getElementById('errorTip');
 
             if (username === '1433' && password === '1433') {
-                // 登录成功：隐藏登录框，显示圣诞树页面
                 document.querySelector('.login-container').style.display = 'none';
+                // 默认显示新版
                 const christmasPage = document.getElementById('christmas-page');
                 christmasPage.style.display = 'flex';
-                
-                // 启动雪花特效（先清空旧定时器，避免重复）
-                startSnowEffect(christmasPage);
+                startSnowEffect(christmasPage, false);
+                startGiftEffect(christmasPage);
             } else {
                 errorTip.style.display = 'block';
                 setTimeout(() => errorTip.style.display = 'none', 3000);
             }
         }
 
-        // 雪花特效核心修复：控制数量+自动清理+避免重复定时器
-        function startSnowEffect(container) {
-            // 先清除旧的雪花定时器（防止重复创建）
+        // 切换到V1.0版本
+        function switchToV1() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorTip = document.getElementById('errorTip');
+
+            if (username === '1433' && password === '1433') {
+                document.querySelector('.login-container').style.display = 'none';
+                // 显示旧版
+                const christmasPageV1 = document.getElementById('christmas-page-v1');
+                christmasPageV1.style.display = 'flex';
+                startSnowEffect(christmasPageV1, true);
+                isV1Mode = true;
+            } else {
+                errorTip.style.display = 'block';
+                setTimeout(() => errorTip.style.display = 'none', 3000);
+            }
+        }
+
+        // 雪花特效（支持新版/旧版）
+        function startSnowEffect(container, isV1) {
             if (snowTimer) clearInterval(snowTimer);
-            
-            // 清理容器内旧的雪花（避免叠加）
-            const oldSnows = container.querySelectorAll('.snow');
+            const oldSnows = container.querySelectorAll(isV1 ? '.snow-v1' : '.snow');
             oldSnows.forEach(snow => snow.remove());
-
-            // 生成初始雪花
-            createSnowflakes(container);
-
-            // 定时补充雪花（5秒一次，且只补充消失的，不叠加）
+            
+            createSnowflakes(container, isV1);
             snowTimer = setInterval(() => {
-                // 先统计当前雪花数量
-                const currentSnowCount = container.querySelectorAll('.snow').length;
-                // 只补充缺失的数量，不超过最大值
+                const currentSnowCount = container.querySelectorAll(isV1 ? '.snow-v1' : '.snow').length;
                 const needCreate = Math.max(0, MAX_SNOW_COUNT - currentSnowCount);
                 if (needCreate > 0) {
-                    createSnowflakes(container, needCreate);
+                    createSnowflakes(container, isV1, needCreate);
                 }
             }, 5000);
         }
 
-        // 生成雪花：可指定数量，默认补满最大值
-        function createSnowflakes(container, count = MAX_SNOW_COUNT) {
-            // 手机端减少雪花数量（降低性能消耗）
+        // 生成雪花（区分新版/旧版）
+        function createSnowflakes(container, isV1, count = MAX_SNOW_COUNT) {
             const isMobile = window.innerWidth <= 768;
             const realCount = isMobile ? Math.floor(count * 0.6) : count;
 
             for (let i = 0; i < realCount; i++) {
                 const snow = document.createElement('div');
-                snow.className = 'snow';
+                snow.className = isV1 ? 'snow-v1' : 'snow';
                 snow.innerText = '❄️';
-                // 随机大小（手机端已通过CSS限制）
                 snow.style.fontSize = `${Math.random() * 10 + 8}px`;
-                // 随机位置（避免扎堆）
                 snow.style.left = `${Math.random() * 100}vw`;
                 snow.style.top = `${Math.random() * -20}px`;
-                // 随机飘落速度（3-8秒，避免同步）
                 const duration = Math.random() * 5 + 3;
                 snow.style.animationDuration = `${duration}s`;
-                // 随机透明度
                 snow.style.opacity = Math.random() * 0.6 + 0.2;
                 
                 container.appendChild(snow);
-                
-                // 雪花落地后自动删除（核心：避免DOM堆积）
                 setTimeout(() => {
                     if (snow.parentNode) snow.remove();
                 }, duration * 1000);
             }
+        }
+
+        // 礼物掉落特效（仅新版）
+        function startGiftEffect(container) {
+            if (giftTimer) clearInterval(giftTimer);
+            giftTimer = setInterval(() => {
+                const currentGiftCount = container.querySelectorAll('.gift').length;
+                const needCreate = Math.max(0, MAX_GIFT_COUNT - currentGiftCount);
+                if (needCreate > 0) {
+                    createGifts(container, needCreate);
+                }
+            }, 3000);
+        }
+
+        // 生成礼物
+        function createGifts(container, count = MAX_GIFT_COUNT) {
+            const isMobile = window.innerWidth <= 768;
+            const realCount = isMobile ? Math.floor(count * 0.5) : count;
+
+            for (let i = 0; i < realCount; i++) {
+                const gift = document.createElement('div');
+                gift.className = 'gift';
+                // 随机礼物图标
+                const gifts = ['🎁', '🎄', '🍬', '🍪', '🌟', '✨'];
+                gift.innerText = gifts[Math.floor(Math.random() * gifts.length)];
+                gift.style.fontSize = `${Math.random() * 10 + 8}px`;
+                gift.style.left = `${Math.random() * 100}vw`;
+                gift.style.top = `${Math.random() * -20}px`;
+                const duration = Math.random() * 8 + 5;
+                gift.style.animationDuration = `${duration}s`;
+                gift.style.opacity = Math.random() * 0.8 + 0.2;
+                
+                container.appendChild(gift);
+                setTimeout(() => {
+                    if (gift.parentNode) gift.remove();
+                }, duration * 1000);
+            }
+        }
+
+        // 输入框月亮特效（账号+密码框都生效）
+        const inputElements = document.querySelectorAll('.apple-input');
+        inputElements.forEach(input => {
+            input.addEventListener('input', (e) => {
+                const inputRect = input.getBoundingClientRect();
+                const parentRect = input.parentElement.getBoundingClientRect();
+                
+                const moon = document.createElement('div');
+                moon.className = 'moon';
+                moon.innerText = '🌙';
+                
+                // 随机位置
+                const left = Math.random() * (inputRect.width - 20) + 10;
+                moon.style.left = `${left}px`;
+                moon.style.top = `${inputRect.top - parentRect.top - 10}px`;
+                
+                // 随机大小和动画时长
+                moon.style.fontSize = `${Math.random() * 8 + 12}px`;
+                const duration = Math.random() * 1 + 0.5;
+                moon.style.animationDuration = `${duration}s`;
+                
+                input.parentElement.appendChild(moon);
+                
+                // 动画结束后删除
+                setTimeout(() => {
+                    if (moon.parentNode) moon.remove();
+                }, duration * 1000);
+            });
+        });
+
+        // 点击颜文字容器生成颗粒特效
+        const christmasTree = document.getElementById('christmas-tree');
+        christmasTree.addEventListener('click', (e) => {
+            // 只在非控件区域点击生效
+            if (e.target.closest('.vine-sock')) return;
+            
+            const rect = christmasTree.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // 生成15个颗粒
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // 随机颗粒图标（圣诞树相关）
+                const particles = ['🎄', '❄️', '🌟', '✨', '🍀', '🌿', '🎁'];
+                particle.innerText = particles[Math.floor(Math.random() * particles.length)];
+                
+                // 随机方向和旋转
+                const randomX = (Math.random() - 0.5) * 100;
+                const randomY = (Math.random() - 0.5) * 100;
+                const randomRotate = Math.random() * 360;
+                
+                // 设置CSS变量
+                particle.style.setProperty('--x', `${randomX}px`);
+                particle.style.setProperty('--y', `${randomY}px`);
+                particle.style.setProperty('--rotate', `${randomRotate}deg`);
+                
+                // 定位到点击位置
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                
+                // 随机动画时长
+                particle.style.animationDuration = `${Math.random() * 1 + 0.5}s`;
+                
+                christmasTree.appendChild(particle);
+                
+                // 动画结束后删除
+                setTimeout(() => {
+                    if (particle.parentNode) particle.remove();
+                }, 1500);
+            }
+        });
+
+        // 触发圣诞树发光+礼物掉落（袜子控件点击）
+        function triggerGlowAndGift() {
+            const christmasTree = document.getElementById('christmas-tree');
+            
+            // 添加强光效果
+            christmasTree.classList.add('glow-effect');
+            
+            // 生成额外礼物
+            createGifts(document.getElementById('christmas-page'), 20);
+            
+            // 3秒后移除强光效果
+            setTimeout(() => {
+                christmasTree.classList.remove('glow-effect');
+            }, 3000);
         }
 
         // 按Enter键登录
@@ -293,13 +677,15 @@
             if (e.key === 'Enter') checkLogin();
         });
 
-        // 页面关闭时清理定时器（防止内存泄漏）
+        // 页面关闭时清理定时器
         window.addEventListener('beforeunload', () => {
             if (snowTimer) clearInterval(snowTimer);
+            if (giftTimer) clearInterval(giftTimer);
         });
     </script>
 </body>
 </html>
+
 
 
 
