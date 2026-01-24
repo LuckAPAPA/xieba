@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加油加油🏆</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "SimHei", sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        .start-page {
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #810de6 0%, #65153d 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            z-index: 9999;
+        }
+
+        .start-text {
+            font-size: 24px;
+            color: #fffb00;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+            text-align: center;
+            line-height: 1.6;
+            background-color: #b92bdd;
+            border-radius: 12px;
+            padding: 15px 20px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .heart-btn {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+            border-radius: 50%;
+            border: none;
+            font-size: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 158, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .heart-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 165, 0, 0.6);
+        }
+
+        /* 苹果玻璃拟态弹窗样式 - 永不删除 */
+        .popup {
+            position: fixed;
+            width: 180px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 10px;
+            animation: popupIn 0.3s ease forwards, float 6s ease-in-out infinite;
+        }
+
+        /* 冠军配色文字（金红渐变） */
+        .popup-text {
+            font-size: 18px;
+            background: linear-gradient(135deg, #d4af37 0%, #ff0000 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.4;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* 烟花炸开特效 */
+        .firework {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .firework-emoji {
+            position: absolute;
+            font-size: 28px;
+            opacity: 1;
+            animation: fireworkExplode 1.5s ease-out forwards;
+        }
+
+        /* 弹窗入场动画 */
+        @keyframes popupIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 弹窗漂浮动画 */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-15px) rotate(2deg);
+            }
+        }
+
+        /* 烟花炸开动画 - 向四周散开 */
+        @keyframes fireworkExplode {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--x), var(--y)) scale(0.5) rotate(360deg);
+            }
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 480px) {
+            .start-text {
+                font-size: 20px;
+            }
+            .heart-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 35px;
+            }
+            .popup {
+                width: 150px;
+                height: 70px;
+            }
+            .popup-text {
+                font-size: 16px;
+            }
+            .firework-emoji {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="start-page" id="startPage">
+        <div class="start-text">佳欣我相信你能行的</div>
+        <button class="heart-btn" onclick="startPopup()">🏆</button>
+    </div>
+
+    <script>
+        // 保留100个弹窗数量
+        const POPUP_COUNT = 100;
+        const DELAY = 100;
+        let popupIndex = 0;
+        
+        // 励志文案库
+        const encouragementTexts = [
+            '冠军就是你🏆', '你超棒的✨', '全力以赴💪', '闪耀全场🌟', '实力碾压🥇',
+            '所向披靡⚡', '王者归来👑', '超常发挥🚀', '未来可期🌈', '越战越勇🔥',
+            '无人能敌💥', '顶峰相见⛰️', '天生赢家🎖️', '为你骄傲🥳', '不负努力💯',
+            '气场全开💫', '势不可挡⚔️', '惊艳全场🎇', '梦想成真💖', '一路开挂🚀',
+            '金牌得主🥇', '超神表现🤩', '自信闪耀💎', '实力认证✅', '胜利在望🏅'
+        ];
+
+        // 烟花特效emoji库
+        const fireworkEmojis = ['🏆', '🥇', '🎖️', '🏅', '✨', '🎇', '🎉', '🎊', '🌟', '💫', '🎁', '💐', '👑', '🔥', '🚀'];
+
+        // 开始弹窗（移除自动删除逻辑）
+        function startPopup() {
+            document.getElementById('startPage').style.display = 'none';
+            
+            const popupTimer = setInterval(() => {
+                createPopup();
+                popupIndex++;
+                
+                if (popupIndex >= POPUP_COUNT) {
+                    clearInterval(popupTimer);
+                }
+            }, DELAY);
+        }
+
+        // 创建弹窗 - 永不删除
+        function createPopup() {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            
+            const popupWidth = window.innerWidth <= 480 ? 150 : 180;
+            const popupHeight = window.innerWidth <= 480 ? 70 : 80;
+            const maxX = screenWidth - popupWidth;
+            const maxY = screenHeight - popupHeight;
+            
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            const popup = document.createElement('div');
+            popup.className = 'popup';
+            popup.style.left = `${randomX}px`;
+            popup.style.top = `${randomY}px`;
+
+            const randomText = encouragementTexts[Math.floor(Math.random() * encouragementTexts.length)];
+            
+            const popupText = document.createElement('div');
+            popupText.className = 'popup-text';
+            popupText.textContent = randomText;
+            
+            popup.appendChild(popupText);
+            document.body.appendChild(popup);
+
+            // 仅保留点击弹窗手动删除（可选），如果不需要可以删掉这行
+            popup.onclick = function() {
+                this.remove();
+            };
+
+            // 彻底删除自动消失的代码，弹窗永久保留
+            // 注释掉自动删除逻辑
+            /*
+            setTimeout(() => {
+                if (popup.parentNode) {
+                    popup.style.opacity = '0';
+                    popup.style.transform = 'scale(0)';
+                    setTimeout(() => popup.remove(), 300);
+                }
+            }, 5000);
+            */
+        }
+
+        // 点击屏幕创建烟花炸开特效
+        document.addEventListener('click', (e) => {
+            // 创建烟花容器
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = `${e.clientX}px`;
+            firework.style.top = `${e.clientY}px`;
+            
+            // 生成12个emoji组成烟花
+            const fireworkCount = 12;
+            for (let i = 0; i < fireworkCount; i++) {
+                const emoji = document.createElement('div');
+                emoji.className = 'firework-emoji';
+                
+                // 随机选择emoji
+                emoji.textContent = fireworkEmojis[Math.floor(Math.random() * fireworkEmojis.length)];
+                
+                // 计算散开的角度和距离（圆形炸开）
+                const angle = (i / fireworkCount) * Math.PI * 2;
+                const distance = 80 + Math.random() * 40; // 炸开距离
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                
+                // 设置自定义属性控制炸开方向
+                emoji.style.setProperty('--x', `${x}px`);
+                emoji.style.setProperty('--y', `${y}px`);
+                
+                // 随机延迟，让炸开更自然
+                emoji.style.animationDelay = `${Math.random() * 0.3}s`;
+                
+                firework.appendChild(emoji);
+            }
+            
+            // 添加到页面
+            document.body.appendChild(firework);
+            
+            // 自动清理烟花容器
+            setTimeout(() => {
+                firework.remove();
+            }, 1600);
+        });
+
+        // 窗口大小调整适配
+        window.addEventListener('resize', function() {
+            const popups = document.querySelectorAll('.popup');
+            popups.forEach(popup => {
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+                const popupWidth = window.innerWidth <= 480 ? 150 : 180;
+                const popupHeight = window.innerWidth <= 480 ? 70 : 80;
+                const maxX = screenWidth - popupWidth;
+                const maxY = screenHeight - popupHeight;
+                
+                const currentX = parseInt(popup.style.left);
+                const currentY = parseInt(popup.style.top);
+                
+                if (currentX > maxX) popup.style.left = `${maxX}px`;
+                if (currentY > maxY) popup.style.top = `${maxY}px`;
+            });
+        });
+    </script>
+</body>
+</html>
